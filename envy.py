@@ -96,10 +96,10 @@ def convolve(imageL,imageR):
 #                   [1, 2, 1]), dtype="int")
 
 # load the input image and convert it to grayscale
-imageL = cv2.imread("L.jpg")
+imageL = cv2.imread("L.png")
 grayL = cv2.cvtColor(imageL, cv2.COLOR_BGR2GRAY)
 
-imageR = cv2.imread("R.jpg")
+imageR = cv2.imread("R.png")
 grayR = cv2.cvtColor(imageR, cv2.COLOR_BGR2GRAY)
 
 convoleOutput = convolve(grayL, grayR)
