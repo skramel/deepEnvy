@@ -4,6 +4,10 @@ def TsaiProj(calib, p3d):
         Use the calibrated camera parameters to predict the particle position
         projected onto the image plane.
         
+        Based on:
+        
+        R. Tsai, "A versatile camera calibration technique for high-accuracy 3D machine vision metrology using off-the-shelf TV cameras and lenses," in IEEE Journal on Robotics and Automation, vol. 3, no. 4, pp. 323-344, August 1987.
+        
         inputs:
             calib   --  calibrated camera parameters
                         Npix_x, Npix_y  # image dimensions (pixel)
