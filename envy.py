@@ -47,22 +47,22 @@ def TsaiProj(calib p3d):
     Xc = np.dot(p3D, np.(calib.R).transpose()) # calib.R' transpose
     Xc = Xc + calib.T
 
+    dummy = calib.f_eff / Xc[:,2]
+    Xu = Xc[:,0] * dummy  # undistorted image coordinates
+    Yu = Xc[:,1] * dummy
     # calculate radial distorions
-    dummy = calib.f_eff./Xc(:,2)
-    Xu = Xc(:,0).*dummy  # undistorted image coordinates
-    Yu = Xc(:,1).*dummy
-    ru2 = Xu.*Xu + Yu.*Yu
-    dummy = 1+calib.k1*ru2 # k1 distortion parameter
-    Xd = Xu.*dummy
-    Yd = Yu.*dummy
+    ru2 = Xu** + Yu**
+    dummy = 1 + calib.k1*ru2 # k1 distortion parameter
+    Xd = Xu * dummy
+    Yd = Yu * dummy
     # iterate once
-    dummy = 1 + calib.k1*(Xd.*Xd + Yd.*Yd)
-    Xd = Xu.*dummy
-    Yd = Yu.*dummy
+    dummy = 1 + calib.k1*(Xd** + Yd**)
+    Xd = Xu*dummy
+    Yd = Yu*dummy
 
-    Np = p3d.shape(1)
+    Np = p3d.shape[0]
     p2d = np.zeros( (Np,2) )
-    p2d(:,0) = Xd/calib.wpix + calib.Noffw + calib.Npixw/2
-    p2d(:,1) = calib.Npixh/2 - calib.Noffh - Yd/calib.hpix
+    p2d(:,0) = Xd/calib.wpix + calib.Npixw/2 + calib.Noffw
+    p2d(:,1) = calib.Npixh/2 - Yd/calib.hpix - calib.Noffh
 
     return p2d
