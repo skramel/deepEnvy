@@ -1,5 +1,28 @@
+import numpy as np
 
-def TsaiProj(calib, p3d):
+class calib():
+    """
+        Calibration class:
+        Contains the camera calibration parameters.
+        
+    """
+    Npixw = 1280			# Npix_x (pixel)
+    Npixh = 1024			# Npix_y (pixel)
+    Noffw = 0               # offset_x (pixel)
+    Noffh = 0               # offset_y (pixel)
+    wpix = 0.014            # pixel size_x (mm)
+    hpix = 0.014            # pixel size_y (mm)
+    f_eff = 310.523         # f_eff - effective focal length
+    kr = 0                  # kr - radial distortion coefficient
+    kx = 1                  # kx - tangential distortion coefficient
+    
+    R = np.zeros( (3,3), dtype=np.float32)
+    T = np.zeros( (3,1), dtype=np.float32)
+    
+    f_eff = 1
+    
+
+def TsaiProj(calib p3d):
     """
         Use the calibrated camera parameters to predict the particle position
         projected onto the image plane.
@@ -11,6 +34,7 @@ def TsaiProj(calib, p3d):
         inputs:
             calib   --  calibrated camera parameters
                         Npix_x, Npix_y  # image dimensions (pixel)
+                        Noffw, Noffh    # image center
                         wpix, hpix		# pixel size (mm)
                         f_eff           # effective focal length (mm)
             p3D     --  particle coordinates in 3D world coordinates
@@ -20,15 +44,13 @@ def TsaiProj(calib, p3d):
     """
 
     # Xc = X * R + T
-    Xc = p3D * (calib.R) # calib.R' transpose
-    Xc(:,1) = Xc(:,1) + calib.T(1)
-    Xc(:,2) = Xc(:,2) + calib.T(2)
-    Xc(:,3) = Xc(:,3) + calib.T(3)
+    Xc = np.dot(p3D, np.(calib.R).transpose()) # calib.R' transpose
+    Xc = Xc + calib.T
 
     # calculate radial distorions
-    dummy = calib.f_eff./Xc(:,3)
-    Xu = Xc(:,1).*dummy  # undistorted image coordinates
-    Yu = Xc(:,2).*dummy
+    dummy = calib.f_eff./Xc(:,2)
+    Xu = Xc(:,0).*dummy  # undistorted image coordinates
+    Yu = Xc(:,1).*dummy
     ru2 = Xu.*Xu + Yu.*Yu
     dummy = 1+calib.k1*ru2 # k1 distortion parameter
     Xd = Xu.*dummy
@@ -38,9 +60,9 @@ def TsaiProj(calib, p3d):
     Xd = Xu.*dummy
     Yd = Yu.*dummy
 
-    Np = size(p3D,1)
-    p2d = zeros(Np,2)
-    p2d(:,1) = Xd/calib.wpix + calib.Noffw + calib.Npixw/2
-    p2d(:,2) = calib.Npixh/2 - calib.Noffh - Yd/calib.hpix
+    Np = p3d.shape(1)
+    p2d = np.zeros( (Np,2) )
+    p2d(:,0) = Xd/calib.wpix + calib.Noffw + calib.Npixw/2
+    p2d(:,1) = calib.Npixh/2 - calib.Noffh - Yd/calib.hpix
 
     return p2d
